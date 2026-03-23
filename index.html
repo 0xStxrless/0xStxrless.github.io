@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stxrless</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:    #08080f;
+  --ink:   #e8e4f0;
+  --dim:   #28253a;
+  --muted: #5a566e;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono:  'DM Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  min-height: 100vh;
+  cursor: crosshair;
+}
+
+/* ══════════════════════════════
+   STAR CANVAS — behind everything
+══════════════════════════════ */
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* only visible in left panel area */
+}
+
+/* ══════════════════════════════
+   LAYOUT
+══════════════════════════════ */
+.page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════
+   LEFT
+══════════════════════════════ */
+.left {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--dim);
+  padding: 3rem 3rem 2.5rem;
+  overflow: hidden;
+  /* left half gets the void */
+  background: transparent;
+}
+
+.name-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 2.4rem;
+  position: relative;
+}
+
+/* ── STXR ── */
+.name-stxr {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(5rem, 10vw, 8.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  user-select: none;
+  margin-left: -0.05em;
+  position: relative;
+  z-index: 2;
+}
+
+/* Each letter gets its own subtle glow — handled in JS */
+.name-stxr .l { display: inline-block; transition: text-shadow 0.4s; }
+
+/* ── LESS ── */
+/* "less" fades into the void — barely there, like light
+   leaving a dying star. mono, smaller, tracking out */
+.name-less {
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+  letter-spacing: 0.55em;
+  color: var(--muted);
+  user-select: none;
+  margin-top: 0.5rem;
+  margin-left: 0.12em;
+  opacity: 0.5;
+  position: relative;
+  z-index: 2;
+  /* fade to nothing on the right */
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+}
+
+.left-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  position: relative;
+  z-index: 2;
+}
+
+.tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.tagline em {
+  font-style: normal;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+}
+
+.left-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.left-links a {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+  width: fit-content;
+}
+
+.left-links a:hover { color: var(--ink); }
+
+/* ══════════════════════════════
+   RIGHT — solid bg so stars don't show through
+══════════════════════════════ */
+.right {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.right-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 52px;
+  border-bottom: 1px solid var(--dim);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.right-header-label {
+  font-size: 0.63rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.right-header-count {
+  font-size: 0.63rem;
+  color: var(--dim);
+}
+
+/* ── entries ── */
+.entry {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 2.2rem 2.5rem;
+  border-bottom: 1px solid var(--dim);
+  position: relative;
+  transition: background 0.18s;
+  border-left: 2px solid transparent;
+}
+
+.entry:hover {
+  background: rgba(232,228,240,0.02);
+  border-left-color: var(--ink);
+}
+
+.entry-num {
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--dim);
+  margin-bottom: 0.75rem;
+}
+
+.entry-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
+  transition: opacity 0.15s;
+}
+
+.entry:hover .entry-title { opacity: 0.65; }
+
+.entry-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.entry-tags { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+
+.tag {
+  font-size: 0.58rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border: 1px solid var(--dim);
+  border-radius: 1px;
+  color: var(--muted);
+  font-weight: 400;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.entry:hover .tag { color: var(--ink); border-color: var(--muted); }
+
+.tag-ctf    { color: #8ab4ff; }
+.tag-web    { color: #72dfa8; }
+.tag-pwn    { color: #c98dff; }
+.tag-rev    { color: #f0c060; }
+.tag-crypto { color: #ff8099; }
+.tag-misc   { color: var(--muted); }
+.tag-bug    { color: #ff8868; }
+
+.entry-date {
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.entry:hover .entry-date { color: var(--muted); }
+
+.entry-arrow {
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  font-size: 0.85rem;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.entry:hover .entry-arrow {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ══════════════════════════════
+   MOBILE
+══════════════════════════════ */
+@media (max-width: 700px) {
+  .page { grid-template-columns: 1fr; }
+  .left {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--dim);
+    padding: 2.5rem 1.5rem 2rem;
+  }
+  .right-header, .entry { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .entry-arrow { right: 1.5rem; }
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--dim); }
+</style>
+</head>
+<body>
+
+<!-- star field canvas — only shows left half -->
+<canvas id="stars"></canvas>
+
+<div class="page">
+
+  <!-- LEFT -->
+  <aside class="left">
+    <div class="name-wrap">
+      <div class="name-stxr">
+        <span class="l">s</span><span class="l">t</span><span class="l">x</span><span class="l">r</span>
+      </div>
+      <div class="name-less">less</div>
+    </div>
+
+    <div class="left-footer">
+      <p class="tagline">
+        breaking things &amp; writing it down.<br>
+        <em>ctf · bug bounty · web sec</em>
+      </p>
+      <div class="left-links">
+        <a href="https://github.com" target="_blank">github ↗</a>
+        <a href="https://twitter.com" target="_blank">twitter ↗</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT -->
+  <main class="right">
+    <div class="right-header">
+      <span class="right-header-label">writeups</span>
+      <span class="right-header-count" id="count"></span>
+    </div>
+
+    <div class="list" id="list">
+
+      <!--
+        ADD A WRITEUP:
+        Copy an <a class="entry"> block.
+        Set href, title, date, tags.
+        Tags: tag-ctf  tag-web  tag-pwn
+              tag-rev  tag-crypto  tag-bug  tag-misc
+        Numbers are filled automatically.
+      -->
+
+      <a href="#" class="entry">
+        <div class="entry-num"></div>
+        <div class="entry-title">RCE via SSTI — Jinja2 template injection in report generator</div>
+        <div class="entry-row">
+          <div class="entry-tags">
+            <span class="tag tag-bug">bug bounty</span>
+            <span class="tag tag-web">web</span>
+          </div>
+          <span class="entry-date">2024-03-18</span>
+        </div>
+        <span class="entry-arrow">↗</span>
+      </a>
+
+      <a href="#" class="entry">
+        <div class="entry-num"></div>
+        <div class="entry-title">ret2libc chain on hardened binary — DEF CON Quals</div>
+        <div class="entry-row">
+          <div class="entry-tags">
+            <span class="tag tag-ctf">ctf</span>
+            <span class="tag tag-pwn">pwn</span>
+          </div>
+          <span class="entry-date">2024-03-10</span>
+        </div>
+        <span class="entry-arrow">↗</span>
+      </a>
+
+      <a href="#" class="entry">
+        <div class="entry-num"></div>
+        <div class="entry-title">OAuth token leakage via open redirect chain in enterprise SSO</div>
+        <div class="entry-row">
+          <div class="entry-tags">
+            <span class="tag tag-web">web</span>
+            <span class="tag tag-bug">bug bounty</span>
+          </div>
+          <span class="entry-date">2024-02-28</span>
+        </div>
+        <span class="entry-arrow">↗</span>
+      </a>
+
+      <a href="#" class="entry">
+        <div class="entry-num"></div>
+        <div class="entry-title">Deobfuscating a custom VM — picoCTF 2024</div>
+        <div class="entry-row">
+          <div class="entry-tags">
+            <span class="tag tag-ctf">ctf</span>
+            <span class="tag tag-rev">rev</span>
+          </div>
+          <span class="entry-date">2024-02-15</span>
+        </div>
+        <span class="entry-arrow">↗</span>
+      </a>
+
+      <a href="#" class="entry">
+        <div class="entry-num"></div>
+        <div class="entry-title">GraphQL introspection → IDOR → full account takeover</div>
+        <div class="entry-row">
+          <div class="entry-tags">
+            <span class="tag tag-ctf">ctf</span>
+            <span class="tag tag-web">web</span>
+          </div>
+          <span class="entry-date">2024-01-12</span>
+        </div>
+        <span class="entry-arrow">↗</span>
+      </a>
+
+    </div>
+  </main>
+</div>
+
+<script>
+/* ── auto-number ── */
+const entries = document.querySelectorAll('.entry');
+entries.forEach((e, i) => {
+  e.querySelector('.entry-num').textContent = String(i + 1).padStart(2, '0') + '.';
+});
+document.getElementById('count').textContent =
+  entries.length + ' post' + (entries.length !== 1 ? 's' : '');
+
+/* ── star field ── */
+const canvas = document.getElementById('stars');
+const ctx    = canvas.getContext('2d');
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', () => { resize(); drawStars(); });
+
+// generate stars — clustered toward center-left, sparse toward edges
+const STAR_COUNT = 260;
+const stars = Array.from({ length: STAR_COUNT }, () => {
+  // polar coords from a point in the upper-center of the left panel
+  const angle  = Math.random() * Math.PI * 2;
+  const radius = Math.pow(Math.random(), 0.6) * 0.42; // bias toward center
+  return {
+    // x in 0..0.5 (left half only)
+    nx:   0.08 + radius * Math.cos(angle) * 0.55 + 0.18,
+    ny:   0.05 + radius * Math.sin(angle) * 1.1  + 0.22,
+    r:    Math.random() < 0.15
+            ? 1.2 + Math.random() * 1.0   // occasional bigger star
+            : 0.3 + Math.random() * 0.7,
+    base: 0.1 + Math.random() * 0.6,
+    speed: 0.3 + Math.random() * 1.4,
+    phase: Math.random() * Math.PI * 2,
+    // a few stars get a tiny 4-point spike
+    spike: Math.random() < 0.07,
+  };
+});
+
+function drawStars() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const t = performance.now() / 1000;
+
+  for (const s of stars) {
+    const x = s.nx * W;
+    const y = s.ny * H;
+    // clamp to left half with soft fade near the border
+    if (x > W * 0.5) continue;
+
+    const twinkle = s.base + (1 - s.base) * 0.5 * (1 + Math.sin(t * s.speed + s.phase));
+    // fade out toward right edge of left panel
+    const edgeFade = Math.max(0, 1 - (x / (W * 0.47)) * 0.45);
+    const alpha = twinkle * edgeFade;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    if (s.spike) {
+      // 4-point star shape
+      const rs = s.r;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const a   = (i / 8) * Math.PI * 2 - Math.PI / 2;
+        const len = i % 2 === 0 ? rs * 2.8 : rs * 0.9;
+        const px  = x + Math.cos(a) * len;
+        const py  = y + Math.sin(a) * len;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+      // soft glow behind it
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, rs * 5);
+      grd.addColorStop(0, 'rgba(180,200,255,0.25)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(x, y, rs * 5, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // plain dot with tiny glow
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, s.r * 3.5);
+      grd.addColorStop(0, 'rgba(210,220,255,0.9)');
+      grd.addColorStop(0.4, 'rgba(160,180,255,0.3)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(x, y, s.r * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#dde4ff';
+      ctx.beginPath();
+      ctx.arc(x, y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+}
+
+// animate
+function loop() {
+  drawStars();
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ── letter glow on name — letters pulse like stars ── */
+const letters = document.querySelectorAll('.name-stxr .l');
+letters.forEach((l, i) => {
+  let phase = i * 1.3;
+  setInterval(() => {
+    phase += 0.04;
+    const bright = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(phase));
+    const size   = Math.round(bright * 22);
+    l.style.textShadow = `0 0 ${size}px rgba(180,200,255,${(bright * 0.35).toFixed(2)})`;
+  }, 50);
+});
+</script>
+</body>
+</html>
